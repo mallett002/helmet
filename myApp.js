@@ -129,7 +129,7 @@ app.use(helmet.hsts({ maxAge: ninetyDaysInMilliseconds, force: true }));
 // DNS prefetching, at the cost of a performance penalty.
 
 // Use `helmet.dnsPrefetchControl()`
-
+app.use(helmet.dnsPrefetchControl());
 
 
 /** 9) Disable Client-Side Caching - `helmet.noCache()` */
@@ -141,7 +141,7 @@ app.use(helmet.hsts({ maxAge: ninetyDaysInMilliseconds, force: true }));
 // use this option only when there is a real need.
 
 // Use helmet.noCache()
-
+app.use(helmet.noCache());
 
 
 /** 10) Content Security Policy - `helmet.contentSecurityPolicy()` */
@@ -172,7 +172,12 @@ app.use(helmet.hsts({ maxAge: ninetyDaysInMilliseconds, force: true }));
 // in the `"'self'"` keyword, the single quotes are part of the keyword itself, 
 // so it needs to be enclosed in **double quotes** to be working.
 
-
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    defaultSrc: ["'self'"],
+    scriptSrc: ["'self'", 'trusted-cdn.com']
+  }
+}));
 
 /** TIP: */ 
 
@@ -182,18 +187,18 @@ app.use(helmet.hsts({ maxAge: ninetyDaysInMilliseconds, force: true }));
 // set any other middleware individually, using a configuration object.
 
 // // - Example - 
-// app.use(helmet({
-//   frameguard: {              // configure
-//     action: 'deny'
-//   },
-//   contentSecurityPolicy: {   // enable and configure
-//    directives: {
-//      defaultSrc: ["'self'"],
-//      styleSrc: ['style.com'],
-//    }
-//   },
-//  dnsPrefetchControl: false   // disable
-// }))
+app.use(helmet({
+  frameguard: {              // configure
+    action: 'deny'
+  },
+  contentSecurityPolicy: {   // enable and configure
+   directives: {
+     defaultSrc: ["'self'"],
+     styleSrc: ['style.com'],
+   }
+  },
+ dnsPrefetchControl: false   // disable
+}));
 
 // We introduced each middleware separately, for teaching purpose, and for
 // ease of testing. Using the 'parent' `helmet()` middleware is easiest, and
